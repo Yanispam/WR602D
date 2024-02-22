@@ -12,6 +12,40 @@
         {% endblock %}
     </head>
     <body>
+        <nav>
+            <ul>
+                <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                <li><a href="{{ path('app_pdf') }}">Générer un pdf</a></li>
+                <li><a href="{{ path('app_subscription') }}">Abonnements</a></li>
+                <li><a href="{{ path('app_history') }}">Historique</a></li>
+                {% if app.user %}
+                    <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
+                {% endif %}
+                {% if not app.user %}
+                    <li><a href="{{ path('app_login') }}">Se connecter</a></li>
+                {% endif %}
+            </ul>
+        </nav>
         {% block body %}{% endblock %}
     </body>
 </html>
+<style>
+    nav ul {
+        display: flex;
+        justify-content: space-around;
+        list-style: none;
+        padding: 20px;
+        background-color: #2e3136;
+        margin: 0;
+    }
+    nav ul li {
+        margin: 0;
+    }
+    nav ul li a{
+         text-decoration: none;
+         color: white;
+     }
+    nav ul li a:hover{
+        color: #4CAF50;
+    }
+</style>
