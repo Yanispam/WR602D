@@ -3,18 +3,86 @@
 {% block title %}Hello SubscriptionController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+
+    <script>
+        function subscribe(subscriptionId) {
+            fetch('/subscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    subscriptionId: subscriptionId
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Rafraîchir la page ou mettre à jour la liste des abonnements
+                        window.location.reload(); // Rafraîchit la page actuelle
+                    } else {
+                        console.error('Erreur lors de la souscription');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la souscription:', error);
+                });
+        }
+    </script>
+    <style>
+        #card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #2e3136;
+            color: white;
+            padding: 20px;
+            margin: 20px;
+            width: 300px;
+            float: left;
+            display: flex;
+            flex-direction: column;
+        }
+        #display {
+            display: flex;
+            flex-wrap: nowrap;
+            margin: auto;
+        }
+        button {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            cursor: pointer;
+            color: white;
+            font-size: 15px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .example-wrapper {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            margin: 50px;
+        }
+    </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Applications/MAMP/htdocs/WR602D/src/Controller/SubscriptionController.php</code></li>
-        <li>Your template at <code>/Applications/MAMP/htdocs/WR602D/templates/subscription/index.html.twig</code></li>
-    </ul>
+    <h1>Nos Abonnements</h1>
+    <div id="display">
+        {% for subscription in subscriptions %}
+            <div id="card">
+                <h2>{{ subscription.title }}</h2>
+                <p>{{ subscription.description }}</p>
+                <p>Price : {{ subscription.price }} €</p>
+                <p>Limite de pdf par jour : {{ subscription.PdfLimit }}</p>
+                <button class="btn btn-primary" id="subscribeBtn_{{ subscription.id }}" onclick="subscribe('{{ subscription.id }}');">S'abonner</button>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
