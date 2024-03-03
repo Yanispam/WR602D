@@ -233,6 +233,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function getActiveSubscription(): ?Subscription
+    {
+        return $this->subscription;
+    }
 
     public function isVerified(): bool
     {

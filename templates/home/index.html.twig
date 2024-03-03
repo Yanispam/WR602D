@@ -44,9 +44,20 @@
         text-align: center;
         margin: 50px;
     }
+    #background {
+        background-color: #4CAF50;
+        padding: 30px;
+    }
+    #background h1 {
+        color: white;
+        font-size: 30px;
+    }
 </style>
 
 <div class="example-wrapper">
+    <div id="background">
+    <h1>Le site parfait pour générer des pdf à partir d'un site web</h1>
+    </div>
     <h1>Découvrez nos abonnements</h1>
     <div id="display">
     {% for subscription in subscriptions %}
