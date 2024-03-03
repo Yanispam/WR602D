@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Subscription;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
@@ -45,6 +46,7 @@ class RegistrationController extends AbstractController
             $user->setUpdatedAt(new \DateTimeImmutable());
             $user->setSubscriptionEndAt(new \DateTimeImmutable('+12 months'));
             $user->setRoles(['ROLE_USER']);
+            $user->setSubscription($entityManager->getRepository(Subscription::class)->findOneBy(['title' => 'Free']));
 
 
             $entityManager->persist($user);

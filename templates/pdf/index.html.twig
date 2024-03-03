@@ -3,10 +3,49 @@
 {% block title %}Convertir une URL en PDF{% endblock %}
 
 {% block body %}
+    {% if pdf_limit_exceeded %}
+        <div class="alert alert-danger" role="alert">
+            Vous avez atteint la limite de 5 PDF par heure. Veuillez réessayer plus tard ou augmenter votre abonnement.
+        </div>
+        <button><a href="{{ path('app_subscription') }}">Changer d'abonnement</a></button>
+    {% else %}
     <h1>Convertir une URL en PDF</h1>
     <form action="{{ path('app_pdf_convert') }}" method="post">
         <label for="url">Entrez l'URL :</label><br>
         <input type="text" id="url" name="url" required><br><br>
         <button type="submit">Convertir en PDF</button>
     </form>
+    {% endif %}
+    <style>
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin: auto;
+        }
+        input {
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            margin: auto;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            margin: auto;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
 {% endblock %}

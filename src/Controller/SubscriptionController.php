@@ -2,61 +2,77 @@
 
 namespace App\Controller;
 
+use App\Entity\Subscription;
 use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\User;
-use App\Entity\Subscription;
+use App\Form\SubscriptionType;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SubscriptionController extends AbstractController
 {
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     #[Route('/subscription', name: 'app_subscription')]
-    public function index(SubscriptionRepository $subscriptionRepository, UserRepository $userRepository): Response
+    public function index(UserInterface $user, SubscriptionRepository $subscriptionRepository, UserRepository $userRepository, Request $request): Response
     {
         $subscriptions = $subscriptionRepository->findAll();
         $users = $userRepository->findAll();
+
+        // Handle form to update user subscription
+        $form = $this->createForm(SubscriptionType::class, $user);
+        $form->handleRequest($request);
+
+        // Persist the changes if form is submitted and valid
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+        }
+
+        // Fetch active subscription of the user
+        $activeSubscription = $user->getActiveSubscription(); // Assuming you have this method in your User entity
+
         return $this->render('subscription/index.html.twig', [
             'controller_name' => 'SubscriptionController',
             'subscriptions' => $subscriptions,
+            'active_subscription' => $activeSubscription,
+            'form' => $form->createView(),
             'users' => $users,
         ]);
     }
-    private $security;
-    private $entityManager;
-
-    public function __construct(Security $security, EntityManagerInterface $entityManager)
+    #[Route('/subscription/change', name: 'app_subscription_change')]
+    public function updateSubscription(Request $request, SubscriptionRepository $subscriptionRepository): Response
     {
-        $this->security = $security;
-        $this->entityManager = $entityManager;
-    }
-    public function subscribe(Request $request): Response
-    {
-        // Récupérer l'ID de l'abonnement depuis la requête POST
-        $subscriptionId = $request->request->get('subscriptionId');
+        // Get the subscription ID from the submitted form data
+        $subscriptionId = $request->request->get('subscription_id');
 
-        // Récupérer l'utilisateur connecté
-        $user = $this->security->getUser();
+        // Find the subscription entity based on the ID
+        $subscription = $subscriptionRepository->find($subscriptionId);
 
-        // Récupérer l'entité Subscription correspondant à l'ID
-        $subscription = $this->entityManager->getRepository(Subscription::class)->find($subscriptionId);
-
-        // Vérifier si l'utilisateur et l'abonnement existent
-        if (!$user || !$subscription) {
-            throw $this->createNotFoundException('Utilisateur ou abonnement non trouvé.');
+        if (!$subscription) {
+            throw $this->createNotFoundException('Subscription not found');
         }
 
-        // Mettre à jour l'ID d'abonnement pour l'utilisateur connecté
+        // Assuming you have a User entity and it's accessible via $this->getUser()
+        $user = $this->getUser();
+
+        // Update the user's subscription
         $user->setSubscription($subscription);
 
-        // Sauvegarder les changements dans la base de données
+        // Persist changes
+        $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        // Redirection ou réponse JSON selon les besoins
-        return $this->redirectToRoute('app_subscription'); // Redirigez vers une autre page après la souscription
+        // Redirect back to the page where the form was submitted from
+        return $this->redirectToRoute('app_subscription');
     }
 }

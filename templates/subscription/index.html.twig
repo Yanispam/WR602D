@@ -4,30 +4,6 @@
 
 {% block body %}
 
-    <script>
-        function subscribe(subscriptionId) {
-            fetch('/subscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    subscriptionId: subscriptionId
-                })
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // Rafraîchir la page ou mettre à jour la liste des abonnements
-                        window.location.reload(); // Rafraîchit la page actuelle
-                    } else {
-                        console.error('Erreur lors de la souscription');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur lors de la souscription:', error);
-                });
-        }
-    </script>
     <style>
         #card {
             border: 1px solid #ccc;
@@ -69,20 +45,31 @@
             text-align: center;
             margin: 50px;
         }
+        .active-subscription button{
+            background-color: red;
+        }
     </style>
-
-<div class="example-wrapper">
-    <h1>Nos Abonnements</h1>
-    <div id="display">
-        {% for subscription in subscriptions %}
-            <div id="card">
-                <h2>{{ subscription.title }}</h2>
-                <p>{{ subscription.description }}</p>
-                <p>Price : {{ subscription.price }} €</p>
-                <p>Limite de pdf par jour : {{ subscription.PdfLimit }}</p>
-                <button class="btn btn-primary" id="subscribeBtn_{{ subscription.id }}" onclick="subscribe('{{ subscription.id }}');">S'abonner</button>
+    <div class="example-wrapper">
+        <h1 class="">Nos Abonnements</h1>
+        <div id="display">
+            <div>
+                {% for subscription in subscriptions %}
+                    <div id="card">
+                    <form action="{{ path('app_subscription_change') }}" method="post">
+                        <input type="hidden" name="subscription_id" value="{{ subscription.id }}">
+                        <div class="{% if subscription.id == active_subscription.id %}active-subscription{% else %}inactive-subscription{% endif %}">
+                            <div>
+                                <h2>{{ subscription.title }}</h2>
+                                <p>{{ subscription.description }}</p>
+                                <p>Prix : {{ subscription.price }} €</p>
+                                <p>Limite de Pdf par jour : {{ subscription.pdfLimit }}</p>
+                            </div>
+                            <button type="submit" name="submit_button">{{ subscription.id == active_subscription.id ? 'Tu as déjà cet abonnement' : 'Choisis cet abonnement' }}</button>
+                        </div>
+                    </form>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
     </div>
-</div>
 {% endblock %}

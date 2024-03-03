@@ -1,20 +1,29 @@
+{# templates/history/index.html.twig #}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HistoryController!{% endblock %}
+{% block title %}Historique des PDF{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
+    <h1>Historique des PDF</h1>
     <ul>
-        <li>Your controller at <code>/Applications/MAMP/htdocs/WR602D/src/Controller/HistoryController.php</code></li>
-        <li>Your template at <code>/Applications/MAMP/htdocs/WR602D/templates/history/index.html.twig</code></li>
+        {% for pdf in pdfs %}
+            <li>{{ pdf.title }} - {{ pdf.createdAt | date('d/m/Y H:i:s') }}</li>
+        {% endfor %}
     </ul>
-</div>
+    <style>
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        li {
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
 {% endblock %}
