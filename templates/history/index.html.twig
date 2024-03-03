@@ -1,0 +1,29 @@
+{# templates/history/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des PDF{% endblock %}
+
+{% block body %}
+    <h1>Historique des PDF</h1>
+    <ul>
+        {% for pdf in pdfs %}
+            <li>{{ pdf.title }} - {{ pdf.createdAt | date('d/m/Y H:i:s') }}</li>
+        {% endfor %}
+    </ul>
+    <style>
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        li {
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+{% endblock %}

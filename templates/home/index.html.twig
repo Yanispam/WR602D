@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+<style>
+    #card {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #2e3136;
+        color: white;
+        padding: 20px;
+        margin: 20px;
+        width: 300px;
+        float: left;
+        display: flex;
+        flex-direction: column;
+    }
+    #display {
+        display: flex;
+        flex-wrap: nowrap;
+        margin: auto;
+    }
+    button {
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background-color: #4CAF50;
+        cursor: pointer;
+        color: white;
+        font-size: 15px;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    .example-wrapper {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    h1 {
+        text-align: center;
+        margin: 50px;
+    }
+    #background {
+        background-color: #4CAF50;
+        padding: 30px;
+    }
+    #background h1 {
+        color: white;
+        font-size: 30px;
+    }
+</style>
+
+<div class="example-wrapper">
+    <div id="background">
+    <h1>Le site parfait pour générer des pdf à partir d'un site web</h1>
+    </div>
+    <h1>Découvrez nos abonnements</h1>
+    <div id="display">
+    {% for subscription in subscriptions %}
+    <div id="card">
+        <h2>{{ subscription.title }}</h2>
+        <p>{{ subscription.description }}</p>
+        <button class="btn btn-primary" onclick="window.location.href='{{ path('app_subscription') }}';">En savoir plus</button>
+    </div>
+    {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
